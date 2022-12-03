@@ -12,14 +12,6 @@ jobs:
       - uses: aquaproj/aqua-installer@c553e04154f1f3b7e5eb35da058db3bb782bee8a # tag=v1.1.2
         with:
           aqua_version: v1.25.0
-      - run: |
-          cosign sign-blob \
-            --output-certificate=aqua-installer.pem \
-            --output-signature aqua-installer.sig \
-            --oidc-provider github \
-            aqua-installer
-        env:
-          COSIGN_EXPERIMENTAL: "1"
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@b508e2e3ef3b19d4e4146d4f8fb3ba9db644a757 # tag=v3.2.0
         with:
