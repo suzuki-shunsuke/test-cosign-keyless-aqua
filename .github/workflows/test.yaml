@@ -1,0 +1,29 @@
+name: test
+on: pull_request
+permissions:
+  contents: read # required for checkout
+  id-token: write # required for cosign
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+      - uses: aquaproj/aqua-installer@c553e04154f1f3b7e5eb35da058db3bb782bee8a # tag=v1.1.2
+        with:
+          aqua_version: v1.25.0
+      - run: |
+          cosign sign-blob \
+            --output-certificate=aqua-installer.pem \
+            --output-signature aqua-installer.sig \
+            --oidc-provider github \
+            aqua-installer
+        env:
+          COSIGN_EXPERIMENTAL: "1"
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@b508e2e3ef3b19d4e4146d4f8fb3ba9db644a757 # tag=v3.2.0
+        with:
+          version: latest
+          args: release --rm-dist --snapshot
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
