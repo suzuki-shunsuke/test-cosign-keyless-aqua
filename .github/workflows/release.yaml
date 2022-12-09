@@ -30,6 +30,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Generate hashes
+        id: hash
         run: |
           # sha256sum generates sha256 hash for all artifacts.
           # base64 -w0 encodes to base64 and outputs on a single line.
